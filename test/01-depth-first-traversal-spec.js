@@ -1,45 +1,60 @@
-const chai = require('chai');
+const chai = require("chai");
 const expect = chai.expect;
-chai.use(require('chai-spies'));
-const printDepthFirst = require('../problems/01-depth-first-traversal');
+const printDepthFirst = require("../problems/01-depth-first-traversal");
 
-describe('printDepthFirst', function() {
-  let consoleSpy;
+describe("printDepthFirst", function () {
+  let consoleLog;
+  let consoleLogArgs;
   beforeEach(() => {
-    consoleSpy = chai.spy.on(console, 'log');
+    consoleLog = console.log;
+    consoleLogArgs = [];
+    console.log = (...args) => {
+      consoleLog(...args);
+      consoleLogArgs.push(args);
+    };
   });
 
   afterEach(() => {
-    chai.spy.restore(console);
+    console.log = consoleLog;
   });
 
-  it('printDepthFirst(3) prints out 3, 4, 6, 5, 2, 1', function() {
+  it("printDepthFirst(3) prints a depth first traversal from 3", () => {
     printDepthFirst(3);
-    expect(consoleSpy).on.nth(1).be.called.with(3);
-    expect(consoleSpy).on.nth(2).be.called.with(4);
-    expect(consoleSpy).on.nth(3).be.called.with(6);
-    expect(consoleSpy).on.nth(4).be.called.with(5);
-    expect(consoleSpy).on.nth(5).be.called.with(2);
-    expect(consoleSpy).on.nth(6).be.called.with(1);
+    expect(consoleLogArgs).to.be.deep.oneOf([
+      [[3], [2], [1], [5], [4], [6]],
+      [[3], [4], [5], [1], [2], [6]],
+      [[3], [4], [5], [2], [1], [6]],
+      [[3], [4], [6], [5], [1], [2]],
+      [[3], [4], [6], [5], [2], [1]],
+      [[3], [2], [5], [1], [4], [6]],
+      [[3], [2], [5], [4], [6], [1]],
+    ]);
   });
 
-  it('printDepthFirst(6) prints out 6, 4, 5, 2, 3, 1', function() {
+  it("printDepthFirst(6) prints a depth first traversal from 6", () => {
     printDepthFirst(6);
-    expect(consoleSpy).on.nth(1).be.called.with(6);
-    expect(consoleSpy).on.nth(2).be.called.with(4);
-    expect(consoleSpy).on.nth(3).be.called.with(5);
-    expect(consoleSpy).on.nth(4).be.called.with(2);
-    expect(consoleSpy).on.nth(5).be.called.with(3);
-    expect(consoleSpy).on.nth(6).be.called.with(1);
+    expect(consoleLogArgs).to.be.deep.oneOf([
+      [[6], [4], [3], [2], [1], [5]],
+      [[6], [4], [5], [1], [2], [3]],
+      [[6], [4], [5], [2], [1], [3]],
+      [[6], [4], [5], [2], [3], [1]],
+      [[6], [4], [3], [2], [5], [1]],
+    ]);
   });
 
-  it('printDepthFirst(4) prints out 4, 6, 5, 2, 3, 1', function() {
+  it("printDepthFirst(4) prints a depth first traversal from 4", () => {
     printDepthFirst(4);
-    expect(consoleSpy).on.nth(1).be.called.with(4);
-    expect(consoleSpy).on.nth(2).be.called.with(6);
-    expect(consoleSpy).on.nth(3).be.called.with(5);
-    expect(consoleSpy).on.nth(4).be.called.with(2);
-    expect(consoleSpy).on.nth(5).be.called.with(3);
-    expect(consoleSpy).on.nth(6).be.called.with(1);
+    expect(consoleLogArgs).to.be.deep.oneOf([
+      [[4], [3], [2], [1], [5], [6]],
+      [[4], [5], [1], [2], [3], [6]],
+      [[4], [5], [2], [1], [3], [6]],
+      [[4], [6], [3], [2], [1], [5]],
+      [[4], [6], [5], [1], [2], [3]],
+      [[4], [6], [5], [2], [1], [3]],
+      [[4], [5], [2], [3], [1], [6]],
+      [[4], [6], [5], [2], [3], [1]],
+      [[4], [3], [2], [5], [1], [6]],
+      [[4], [6], [3], [2], [5], [1]],
+    ]);
   });
 });
